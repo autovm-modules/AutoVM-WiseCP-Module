@@ -635,23 +635,33 @@
 
             <?php if($u == 'admin'): ?>
                 <!-- Machine ID -->
-                <div class="container-fluid bg-white shadow-sm m-0 p-0 py-3 top-100 start-50 translate-middle position-absolute" style="margin: -30px 0 0 0 !important;" v-cloak>
+                <div class="container-fluid bg-white shadow-sm m-0 p-0 py-3 top-100 start-50 translate-middle position-absolute" style="margin: -34px 0 0 0 !important;" v-cloak>
                     <div class="row m-0 p-0">
-                        <div class="d-flex flex-row justify-content-start">
-                            <!-- Get & Set Machine ID     -->
-                            <div class="ms-4">
-                                <div class="input-group ms-4">
-                                    <span class="input-group-text text-center bg-primary text-dark p-0 m-0 px-4 py-2" style="--bs-bg-opacity: 0.3;" id="basic-addon3">
-                                        {{ lang('machienid') }} 
-                                    </span>
-                                    <input v-if="machineIdFromDataBase" v-model="newMachineID" type="number" class="form-control text-center" :placeholder="machineIdFromDataBase" aria-label="machineid" aria-describedby="basic-addon3" style="max-width: 80px;" min="1">
-                                    <input v-else-if="!machineIdFromDataBase" type="number" class="form-control text-center" placeholder="--" aria-label="machineid" aria-describedby="basic-addon3" style="max-width: 80px;">
+                        <div class="d-flex flex-row justify-content-between align-items-center">
+                            <div>       
+                                <div class="ms-4">
+                                    <div class="input-group ms-4">
+                                        <span class="input-group-text text-center bg-primary text-dark p-0 m-0 px-4 py-2" style="--bs-bg-opacity: 0.3;" id="basic-addon3">
+                                            {{ lang('machienid') }} 
+                                        </span>
+                                        <input v-if="machineIdFromDataBase" v-model="newMachineID" type="number" class="form-control text-center" :placeholder="machineIdFromDataBase" aria-label="machineid" aria-describedby="basic-addon3" style="max-width: 80px;" min="1">
+                                        <input v-else-if="!machineIdFromDataBase" type="number" class="form-control text-center" placeholder="--" aria-label="machineid" aria-describedby="basic-addon3" style="max-width: 80px;">
+                                    </div>
+                                </div>
+                                <div v-if="newMachineID" class="ms-4">
+                                    <a @click="changeMachineID" class="btn btn-primary btn-sm m-0 p-0 px-4 py-2 ms-3">
+                                        {{ lang('savenewid') }} 
+                                    </a>                    
                                 </div>
                             </div>
-                            <div v-if="newMachineID" class="ms-4">
-                                <a @click="changeMachineID" class="btn btn-primary btn-sm m-0 p-0 px-4 py-2 ms-3">
-                                    {{ lang('savenewid') }} 
-                                </a>                    
+                            <div>
+                                <div class="">
+                                    <div class="">
+                                        <button class="btn btn-danger mx-3 px-4" v-if="!DestroyIsclicked" @click="CheckDestroySure">Delete Machine</button>
+                                        <button class="btn btn-danger mx-3 px-4" v-if="DestroyIsclicked" @click="DestroyMachine"> Yes </button>
+                                        <button class="btn btn-secondary mx-3 px-4" v-if="DestroyIsclicked" @click="CheckDestroySure"> No </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

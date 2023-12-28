@@ -5,5 +5,5 @@ return [
     'server-info-checker' => false,
     'server-info-port' => false,
     'access-hash' => false,
-    'configurable-option-params' => ['poolId', 'memorySize', 'diskSize', 'cpuCore']
+    'configurable-option-params' => ['poolId', 'memorySize', 'memoryLimit', 'diskSize', 'cpuCore', 'cpuLimit']
 ];

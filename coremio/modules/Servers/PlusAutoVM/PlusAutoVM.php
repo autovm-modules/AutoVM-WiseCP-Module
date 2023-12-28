@@ -1031,6 +1031,26 @@ class PlusAutoVM_Module extends ServerModule
         return null;
     }
 
+    // Dlet Machine
+    public function use_adminArea_DestroyMachine()
+    {
+        $machineId = $this->getMachineIdFromService();
+        $response = $this->sendDestroyRequest($machineId);
+        $this->response($response); 
+    }
+
+    public function sendDestroyRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+
+        $address = [
+            $this->address, 'candy', 'backend', 'machine', 'destroy', $machineId
+        ];
+
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+    
     // GET machineid admin only
     public function use_adminArea_getMachineidFromDatabase()
     {
@@ -1071,6 +1091,11 @@ class PlusAutoVM_Module extends ServerModule
             }
             else
             {
+                $set = [
+                    'machine_id' => $newId,
+                    'order_id' => $orderId,
+                ];
+                $insert = WDB::insert("autovm_order",$set);
                 $response = "Order Did not find";
             }
 

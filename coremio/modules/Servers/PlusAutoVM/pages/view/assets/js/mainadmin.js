@@ -1,6 +1,8 @@
 const app = Vue.createApp({
     data() {
         return {
+
+            DestroyIsclicked: false,
             
             machineIdFromDataBase: null,
             loading: false,
@@ -612,6 +614,10 @@ const app = Vue.createApp({
 
     methods: {
 
+        CheckDestroySure() {
+            this.DestroyIsclicked = !this.DestroyIsclicked;
+        },
+
         changeTimeVisibilty() {
             setTimeout(() => {
                 this.isVisibe = false;
@@ -830,6 +836,24 @@ const app = Vue.createApp({
             setInterval(this.loadDetail, 35000)
         },
 
+
+        // Delet Machine
+        async DestroyMachine() {
+            try {
+                const response = await axios.get(this.baseApiUrl, {
+                    params: {
+                        operation: "operation_server_automation",
+                        use_method: "DestroyMachine"
+                    },
+                });
+
+            } catch (error) {
+                console.error('getMachineidFromDatabase in vue didnt work:', error);
+            }
+            
+            parent.location.reload();
+        },
+        
         // GET Machine ID 
         async getMachineIDFromDataBase() {
             try {
@@ -1044,6 +1068,29 @@ const app = Vue.createApp({
                 }
             }
         },
+
+        
+        async doDestroy() {
+            let accept = await this.openConfirmDialog(this.lang('Start'), this.lang('Are you sure about this?'))
+            if (accept) {
+                let response = await axios.get(this.baseApiUrl, {
+                    params: {
+                        operation: "operation_server_automation",
+                        use_method: "DestroyMachine"
+                    },
+                });
+
+                response = response.data
+                if (response.message) {
+                    this.openMessageDialog(this.lang(response.message))
+                }
+                if (response.data) {
+                    this.doingAction = 'Destroy'
+                    this.machine = response.data
+                }
+            }
+        },
+
 
         // checked 9
         async loadTemplates() {

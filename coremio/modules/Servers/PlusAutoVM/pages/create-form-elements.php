@@ -1,43 +1,52 @@
 <?php 
 
-// Params
-$params = $module->getArray('module_data', $product);
+// echo '<pre>';
+// print_r($product['module_data']);
+// echo '</pre>';
 
-// Pool
-$poolId = $module->getArray('poolId', $params);
+if(!empty($product['module_data']))
+{
+    $params = $module->getArray('module_data', $product);
+    
+    // Pool
+    $poolId = $module->getArray('poolId', $params);
+    
+    // Memory
+    $memorySize = $module->getArray('memorySize', $params);
+    
+    // Memory
+    $memoryLimit = $module->getArray('memoryLimit', $params);
+    
+    // Disk
+    $diskSize = $module->getArray('diskSize', $params);
+    
+    // CPU
+    $cpuCore = $module->getArray('cpuCore', $params);
+    
+    // CPU Limit
+    $cpuLimit = $module->getArray('cpuLimit', $params);
 
-// Memory
-$memorySize = $module->getArray('memorySize', $params);
+} else {
+   
+   $poolId = '1';
+   $memorySize = '1024';
+   $memoryLimit = '1024';
+   $diskSize = '20';
+   $cpuCore = '1';
+   $cpuLimit = '2000';
 
-// Memory
-$memoryLimit = $module->getArray('memoryLimit', $params);
-
-// Disk
-$diskSize = $module->getArray('diskSize', $params);
-
-// CPU
-$cpuCore = $module->getArray('cpuCore', $params);
-
-// CPU Limit
-$cpuLimit = $module->getArray('cpuLimit', $params);
-
-// Traffic
-// $traffic = $module->getArray('traffic', $params);
-
-// Duration
-// $duration = $module->getArray('duration', $params);
-
+}
 
 
 
 // set all variable in one Arr
 $coreVariables = array(
     'poolId' => $poolId,
-    'memorySize' => $memorySize,
-    'memoryLimit' => $memoryLimit,
-    'diskSize' => $diskSize,
-    'cpuCore' => $cpuCore,
-    'cpuLimit' => $cpuLimit
+    'memorySize' => $memorySize ,
+    'memoryLimit' => $memoryLimit ,
+    'diskSize' => $diskSize ,
+    'cpuCore' => $cpuCore ,
+    'cpuLimit' => $cpuLimit 
 );
 
 ?>

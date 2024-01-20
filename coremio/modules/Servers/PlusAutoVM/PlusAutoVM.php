@@ -421,7 +421,7 @@ class PlusAutoVM_Module extends ServerModule
                 'MachinePass' => $MachinePass,
             );
 
-            $this->createthefile($dataPrint);
+            // $this->createthefile($dataPrint);
             
             // Insert to DataBase
                 try {

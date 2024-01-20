@@ -638,7 +638,7 @@
                 <div class="container-fluid bg-white shadow-sm m-0 p-0 py-3 top-100 start-50 translate-middle position-absolute" style="margin: -34px 0 0 0 !important;" v-cloak>
                     <div class="row m-0 p-0">
                         <div class="d-flex flex-row justify-content-between align-items-center">
-                            <div>       
+                            <div class="d-flex flex-row justify-content-between align-items-center">
                                 <div class="ms-4">
                                     <div class="input-group ms-4">
                                         <span class="input-group-text text-center bg-primary text-dark p-0 m-0 px-4 py-2" style="--bs-bg-opacity: 0.3;" id="basic-addon3">
@@ -654,7 +654,7 @@
                                     </a>                    
                                 </div>
                             </div>
-                            <div>
+                            <!-- <div>
                                 <div class="">
                                     <div class="">
                                         <button class="btn btn-danger mx-3 px-4" v-if="!DestroyIsclicked" @click="CheckDestroySure">Delete Machine</button>
@@ -662,7 +662,7 @@
                                         <button class="btn btn-secondary mx-3 px-4" v-if="DestroyIsclicked" @click="CheckDestroySure"> No </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>

@@ -380,21 +380,36 @@ class PlusAutoVM_Module extends ServerModule
                 'order_id' => $orderId, 'machine_id' => $response->data->id
             ];
 
+            $MachineAlias = isset($response->data->reserve->address->alias) ? $response->data->reserve->address->alias : '';
+            $MachineAddress = isset($response->data->reserve->address->address) ? $response->data->reserve->address->address : '';
+            $MachineAddress = !empty($MachineAlias) ? $MachineAlias : (!empty($MachineAddress) ? $MachineAddress : '');
+            $MachineUsername = isset($response->data->template->username) ? $response->data->template->username : '';
+            $MachinePass = isset($response->data->password) ? $response->data->password : '';
+            $ThisMachineID = isset($response->data->id) ? $response->data->id : '';
+
+            // $dataPrint = array(
+            //     'MachineAddress' => $MachineAddress,
+            //     'MachineUsername' => $MachineUsername,
+            //     'MachinePass' => $MachinePass,
+            //     'ThisMachineID' => $ThisMachineID,
+            // );
+
+            // $this->createthefile($dataPrint);
             
             // Insert to DataBase
                 try {
                     WDB::insert('autovm_order', $params);
                     return [
-                        'ip'           => '',
+                        'ip'           => $MachineAddress,
                         'assigned_ips' => [],
                         'login'        => [
-                            'username' => '',
-                            'password' => '',
+                            'username' => $MachineUsername,
+                            'password' => $MachinePass,
                         ],
-                        'config' => ['machineId' => $response->data->id],
+                        'config' => ['machineId' => $ThisMachineID],
                     ];
-                    $this->createthefile($response->data->id);
-
+                    
+                    
                 } catch (Exception $e) {
                     $this->error = 'Could not Database for Order';
                     return false;
@@ -1009,9 +1024,9 @@ class PlusAutoVM_Module extends ServerModule
 
         $machine = $machine->build(true)
             ->getObject();
-
+        
         // The first value
-        return current($machine);
+        return $machine->machine_id;
     }
 
     public function response($response)
@@ -1146,7 +1161,7 @@ class PlusAutoVM_Module extends ServerModule
             $message = $response->message;
         }
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
@@ -1190,7 +1205,7 @@ class PlusAutoVM_Module extends ServerModule
         }
             
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
@@ -1231,7 +1246,7 @@ class PlusAutoVM_Module extends ServerModule
             $message = $response->message;
         }
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
@@ -1245,17 +1260,13 @@ class PlusAutoVM_Module extends ServerModule
         return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
     }
 
-    // crate file to show data
-    // public function createthefile($text)
-    // {
-    //     $filePath = __DIR__ . '/file.txt';
-    //     echo('< <br>');
-    //     $result = file_put_contents($filePath, var_export($text, true));
-    //     echo('> <br>');
-    //     echo($result);
-    //     echo('> <br>');
 
-    // }
+    // crate file to show data
+    public function createthefile($text)
+    {
+        $filePath = __DIR__ . '/file.txt';
+        $result = file_put_contents($filePath, var_export($text, true));
+    }
 
 }
 

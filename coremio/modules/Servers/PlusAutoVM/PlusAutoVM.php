@@ -380,9 +380,36 @@ class PlusAutoVM_Module extends ServerModule
                 'order_id' => $orderId, 'machine_id' => $response->data->id
             ];
 
+            $MachineAlias = isset($response->data->reserve->address->alias) ? $response->data->reserve->address->alias : '';
+            $MachineAddress = isset($response->data->reserve->address->address) ? $response->data->reserve->address->address : '';
+            $MachineAddress = !empty($MachineAlias) ? $MachineAlias : (!empty($MachineAddress) ? $MachineAddress : '');
+            $MachineUsername = isset($response->data->template->username) ? $response->data->template->username : '';
+            $MachinePass = isset($response->data->password) ? $response->data->password : '';
+            $ThisMachineID = isset($response->data->id) ? $response->data->id : '';
+
+            // $dataPrint = array(
+            //     'MachineAddress' => $MachineAddress,
+            //     'MachineUsername' => $MachineUsername,
+            //     'MachinePass' => $MachinePass,
+            //     'ThisMachineID' => $ThisMachineID,
+            // );
+
+            // $this->createthefile($dataPrint);
+            
             // Insert to DataBase
                 try {
                     WDB::insert('autovm_order', $params);
+                    return [
+                        'ip'           => $MachineAddress,
+                        'assigned_ips' => [],
+                        'login'        => [
+                            'username' => $MachineUsername,
+                            'password' => $MachinePass,
+                        ],
+                        'config' => ['machineId' => $ThisMachineID],
+                    ];
+                    
+                    
                 } catch (Exception $e) {
                     $this->error = 'Could not Database for Order';
                     return false;
@@ -997,9 +1024,9 @@ class PlusAutoVM_Module extends ServerModule
 
         $machine = $machine->build(true)
             ->getObject();
-
+        
         // The first value
-        return current($machine);
+        return $machine->machine_id;
     }
 
     public function response($response)
@@ -1106,5 +1133,156 @@ class PlusAutoVM_Module extends ServerModule
         $this->response($response);
 
     }
-                
+
+    public function suspend()
+    {
+        
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendSuspendRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+
+        if (!empty($message)) {
+            $this->error = $message;
+            return false;
+        }
+
+        return true;
+
+    }
+    
+    public function sendSuspendRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'suspend', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+
+    public function unsuspend()
+    {   
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendUnsuspendRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+            
+
+        if (!empty($message)) {
+            $this->error = $message;
+            return false;
+        }
+        return true;
+    }
+
+
+    public function sendUnsuspendRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'unsuspend', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+    public function terminate()
+    {   
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendDestroyRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+
+        if (!empty($message)) {
+            $this->error = $message;
+            return false;
+        }
+        return true;
+    }
+
+    public function sendTerminateRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'destroy', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+
+    // crate file to show data
+    public function createthefile($text)
+    {
+        $filePath = __DIR__ . '/file.txt';
+        $result = file_put_contents($filePath, var_export($text, true));
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

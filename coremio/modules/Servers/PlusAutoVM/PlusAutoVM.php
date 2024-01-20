@@ -380,9 +380,21 @@ class PlusAutoVM_Module extends ServerModule
                 'order_id' => $orderId, 'machine_id' => $response->data->id
             ];
 
+            
             // Insert to DataBase
                 try {
                     WDB::insert('autovm_order', $params);
+                    return [
+                        'ip'           => '',
+                        'assigned_ips' => [],
+                        'login'        => [
+                            'username' => '',
+                            'password' => '',
+                        ],
+                        'config' => ['machineId' => $response->data->id],
+                    ];
+                    $this->createthefile($response->data->id);
+
                 } catch (Exception $e) {
                     $this->error = 'Could not Database for Order';
                     return false;
@@ -1106,5 +1118,159 @@ class PlusAutoVM_Module extends ServerModule
         $this->response($response);
 
     }
-                
+
+    public function suspend()
+    {
+        
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendSuspendRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+
+        if ($message) {
+            $this->error = $message;
+            return false;
+        }
+
+        return true;
+
+    }
+    
+    public function sendSuspendRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'suspend', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+
+    public function unsuspend()
+    {   
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendUnsuspendRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+            
+
+        if ($message) {
+            $this->error = $message;
+            return false;
+        }
+        return true;
+    }
+
+
+    public function sendUnsuspendRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'unsuspend', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+    public function terminate()
+    {   
+        try
+        {
+            $machineId = $this->getMachineIdFromService();
+            $response = $this->sendDestroyRequest($machineId);
+            // $this->createthefile($response);
+        }
+        catch (Exception $e){
+            $this->error = $e->getMessage();
+            self::save_log(
+                'Servers',
+                $this->_name,
+                __FUNCTION__,
+                ['order' => $this->order],
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+            return false;
+        }
+
+        
+        if(property_exists($response, 'message')){
+            $message = $response->message;
+        }
+
+        if ($message) {
+            $this->error = $message;
+            return false;
+        }
+        return true;
+    }
+
+    public function sendTerminateRequest($machineId)
+    {
+        $headers = ['token' => $this->token];
+        $address = [ $this->address, 'candy', 'backend', 'machine', 'destroy', $machineId ];
+        return Request::instance()->setAddress($address)->setHeaders($headers)->getResponse()->asObject();
+    }
+
+    // public function createthefile($text)
+    // {
+    //     $filePath = __DIR__ . '/file.txt';
+    //     echo('< <br>');
+    //     $result = file_put_contents($filePath, var_export($text, true));
+    //     echo('> <br>');
+    //     echo($result);
+    //     echo('> <br>');
+
+    // }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

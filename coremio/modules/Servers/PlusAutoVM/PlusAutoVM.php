@@ -380,46 +380,19 @@ class PlusAutoVM_Module extends ServerModule
                 'order_id' => $orderId, 'machine_id' => $response->data->id
             ];
 
-            
-            if(!empty($response->data->reserve->address->alias)){
-                $MachineAlias = $response->data->reserve->address->alias;
-            } else {
-                $MachineAlias = '';
-            }
-            
-            if(!empty($response->data->reserve->address->alias)){
-                $MachineAddress = $response->data->reserve->address->address;
-            } else {
-                $MachineAddress = '';
-            }
-            
-            if(!empty($response->data->reserve->address->alias)){
-                $MachineUsername = $response->data->template->username;
-            } else {
-                $MachineUsername = '';
-            }
+            $MachineAlias = isset($response->data->reserve->address->alias) ? $response->data->reserve->address->alias : '';
+            $MachineAddress = isset($response->data->reserve->address->address) ? $response->data->reserve->address->address : '';
+            $MachineAddress = !empty($MachineAlias) ? $MachineAlias : (!empty($MachineAddress) ? $MachineAddress : '');
+            $MachineUsername = isset($response->data->template->username) ? $response->data->template->username : '';
+            $MachinePass = isset($response->data->password) ? $response->data->password : '';
+            $ThisMachineID = isset($response->data->id) ? $response->data->id : '';
 
-            if(!empty($response->data->reserve->address->alias)){
-                $MachinePass = $response->data->password;
-            } else {
-                $MachinePass = '';
-            }
-            
-            if(empty($MachineAlias)){
-                $MachineAlias = $MachineAddress;
-            }
-
-            if(!empty($response->data->id)){
-                $ThisMachineID = $response->data->id;
-            } else {
-                $ThisMachineID = '';
-            }
-
-            $dataPrint = array(
-                'MachineAddress' => $MachineAddress,
-                'MachineUsername' => $MachineUsername,
-                'MachinePass' => $MachinePass,
-            );
+            // $dataPrint = array(
+            //     'MachineAddress' => $MachineAddress,
+            //     'MachineUsername' => $MachineUsername,
+            //     'MachinePass' => $MachinePass,
+            //     'ThisMachineID' => $ThisMachineID,
+            // );
 
             // $this->createthefile($dataPrint);
             
@@ -431,7 +404,7 @@ class PlusAutoVM_Module extends ServerModule
                         'assigned_ips' => [],
                         'login'        => [
                             'username' => $MachineUsername,
-                            'password' => $MachinePas,
+                            'password' => $MachinePass,
                         ],
                         'config' => ['machineId' => $ThisMachineID],
                     ];
@@ -1051,9 +1024,9 @@ class PlusAutoVM_Module extends ServerModule
 
         $machine = $machine->build(true)
             ->getObject();
-
+        
         // The first value
-        return current($machine);
+        return $machine->machine_id;
     }
 
     public function response($response)
@@ -1188,7 +1161,7 @@ class PlusAutoVM_Module extends ServerModule
             $message = $response->message;
         }
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
@@ -1232,7 +1205,7 @@ class PlusAutoVM_Module extends ServerModule
         }
             
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
@@ -1273,7 +1246,7 @@ class PlusAutoVM_Module extends ServerModule
             $message = $response->message;
         }
 
-        if ($message) {
+        if (!empty($message)) {
             $this->error = $message;
             return false;
         }
